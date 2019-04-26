@@ -1,43 +1,60 @@
 package ch.fhnw.krysi.modes;
 
+import java.util.List;
+
 import ch.fhnw.krysi.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-
+/**
+ * Implementation of CTR SPNMode
+ */
 public class CTR extends SPNMode {
 
     public CTR(Encryptor encryptor, int r, int n, int m) {
         super(encryptor, r, n, m);
     }
 
+    /**
+     * Static initialize Vector (should be random in production)
+     */
     private String generateInitializeVector() {
-        return "0000010011010010";
+        return "0000101110111000";
     }
 
+    /**
+     * Encrypts plaintext blockwise
+     */
     @Override
     public String encrypt(String plaintext) {
-        String initializeVector = generateInitializeVector();
-        String cyptherVecotor = initializeVector;
+        String cypherVector = generateInitializeVector();
         String paddedPlaintext = BitString.padBlock(plaintext, this.size);
 
-        List<String> streamCyper = new ArrayList<String>();
+        String result = cypherVector;
 
-        for(int i = 0; i < paddedPlaintext.length() / this.size; i++) {
-          streamCyper.add(this.encryptor.encrypt(cyptherVecotor));
-          cyptherVecotor = BitString.increment(cyptherVecotor, this.size);
+        for(String block : BitString.makeChunks(paddedPlaintext, this.size)) {
+          result += BitString.xor(this.encryptor.encrypt(cypherVector), block);
+          cypherVector = BitString.increment(cypherVector, this.size);
         }
-
-        return initializeVector + IntStream
-          .range(0, paddedPlaintext.length() / this.size)
-          .mapToObj(i -> BitString.xor(streamCyper.get(i), paddedPlaintext.substring(i * this.size, i * this.size + this.size)))
-          .collect(Collectors.joining());
+        return result;
     }
 
+    /**
+     * Decrypts plaintext blockwise
+     */
     @Override
     public String decrypt(String ciphertext) {
-        return encrypt(ciphertext);
+      if (ciphertext.length() == 0) {
+        return "";
+      }
+
+      List<String> blocks = BitString.makeChunks(ciphertext, this.size);
+      String cypherVector = blocks.remove(0);
+
+      String result = "";
+
+      for(String block : blocks) {
+        result += BitString.xor(this.encryptor.decrypt(cypherVector), block);
+        cypherVector = BitString.increment(cypherVector, this.size);
+      }
+      return result;
     }
 }

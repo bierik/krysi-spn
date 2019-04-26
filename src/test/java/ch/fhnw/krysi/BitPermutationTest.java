@@ -15,7 +15,7 @@ public class BitPermutationTest {
 
   @Test
   void transforms() {
-    assertEquals("0111", permutation.permute("1101"));
+    assertEquals("0101", permutation.permute("0101"));
   }
 
   @Test

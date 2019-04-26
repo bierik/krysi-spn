@@ -1,5 +1,8 @@
 package ch.fhnw.krysi;
 
+/**
+ * Base class of encryptor
+ */
 public abstract class Encryptor {
 
   protected SBox sbox;

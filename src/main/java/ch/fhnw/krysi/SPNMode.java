@@ -1,5 +1,8 @@
 package ch.fhnw.krysi;
 
+/**
+ * Represents an SPN Mode
+ */
 public abstract class SPNMode {
 
   protected Encryptor encryptor;
