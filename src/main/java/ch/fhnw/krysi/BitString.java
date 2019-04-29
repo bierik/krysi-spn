@@ -1,6 +1,6 @@
 package ch.fhnw.krysi;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -16,11 +16,22 @@ public class BitString {
    * @param b
    * @return 0 if a and b matches, 1 otherwise
    */
-  private static Character xorChar(Character a, Character b) {
+  public static Character xorChar(Character a, Character b) {
     if (a.equals(b)) {
       return '0';
     }
     return '1';
+  }
+
+  public static Integer bitToCharCode(Character bit) {
+    return Integer.parseInt(String.valueOf(bit), 2);
+  }
+
+  public static String bitStringToASCII(String bitstring) {
+    return Arrays
+      .stream(bitstring.split("(?<=\\G.{8})"))
+      .map(c -> String.valueOf((char)Integer.parseInt(c, 2)))
+      .collect(Collectors.joining());
   }
 
   /**
@@ -88,10 +99,7 @@ public class BitString {
     if (string.length() % blockSize != 0) {
       throw new IllegalArgumentException("BitString is not divisible in the block size");
     }
-    List<String> chunks = new ArrayList<String>();
-    for(int i = 0; i < string.length(); i += blockSize) {
-      chunks.add(string.substring(i, i + blockSize));
-    }
-    return chunks;
+
+    return List.of(string.split(String.format("(?<=\\G.{%d})", blockSize)));
   }
 }
