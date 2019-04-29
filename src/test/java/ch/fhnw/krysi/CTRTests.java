@@ -4,6 +4,7 @@ import ch.fhnw.krysi.modes.CTR;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -59,14 +60,12 @@ class CTRTests {
 
   @Test
   void encrypts() {
-    String cypher = "00001011101110001010111010110100";
-    String plaintext = "0001001010001111";
-    assertEquals(cypher, spn.encrypt(plaintext));
+    assertThrows(UnsupportedOperationException.class, () -> spn.encrypt(""));
   }
 
   @Test
   void decrypts() {
     String plaintext = "00000100110100100000101110111000000000101000111110001110011111110110000001010001010000111010000000010011011001110010101110110000";
-    assertEquals("", spn.encrypt(plaintext));
+    assertEquals("Gut gemacht!", BitString.bitStringToASCII(spn.decrypt(plaintext)).substring(0, 12));
   }
 }
